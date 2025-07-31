@@ -1,25 +1,30 @@
 import { verifyAccessToken } from '../utils/jwtUtils.js';
-import {error} from '../utils/response.js'
+import { error } from '../utils/response.js';
+
 const authMiddleware = (req, res, next) => {
-    // 从请求头获取token
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        error(res, '未提供token', 401)
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return error(res, '未提供有效的认证令牌', 401);
     }
-    // 提取token（去掉Bearer 前缀）
-    const token = authHeader?.split(' ')[1]||'';
+    
+    const token = authHeader.slice(7); // 移除 'Bearer ' 前缀
+    
     if (!token) {
-        error(res, 'token格式错误', 401)
+        return error(res, 'Token格式错误', 401);
     }
-
-    // 验证token
-    const payload = verifyAccessToken(token);
-    if (!payload) {
-        error(res, 'token无效或已过期', 401)
+    
+    try {
+        const payload = verifyAccessToken(token);
+        if (!payload) {
+            return error(res, 'Token无效或已过期', 401);
+        }
+        
+        req.user = payload;
+        next();
+    } catch (err) {
+        return error(res, 'Token验证失败', 401);
     }
-
-    // 将用户信息添加到请求对象
-    req.user = payload;
-    next();
 };
+
 export default authMiddleware;
