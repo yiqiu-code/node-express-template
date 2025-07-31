@@ -6,15 +6,12 @@ import { asyncHandler } from '../middleware/errorMiddleware.js';
 
 export const login = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
-    console.log(req.body);
-    
     const user = await db('users').where({ username }).first();
     if (!user) {
         return error(res, '用户名或密码错误', 400);
     }
     
     const isValidPassword = await comparePassword(password, user.password);
-    console.log(isValidPassword);
     
     if (!isValidPassword) {
         return error(res, '用户名或密码错误', 400);
