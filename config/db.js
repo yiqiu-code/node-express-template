@@ -10,15 +10,15 @@ const db = knex({
         database: process.env.DB_NAME || 'auto_form',
         charset: 'utf8mb4'
     },
-    // pool: {
-    //     min: parseInt(process.env.DB_POOL_MIN) || 2,
-    //     max: parseInt(process.env.DB_POOL_MAX) || 10,
-    //     idleTimeoutMillis: 30000,
-    //     acquireTimeoutMillis: 60000,
-    //     createTimeoutMillis: 30000,
-    //     destroyTimeoutMillis: 5000,
-    //     propagateCreateError: false
-    // },
+    pool: {
+        min: parseInt(process.env.DB_POOL_MIN) || 2,
+        max: parseInt(process.env.DB_POOL_MAX) || 10,
+        idleTimeoutMillis: 30000,
+        acquireTimeoutMillis: 60000,
+        createTimeoutMillis: 30000,
+        destroyTimeoutMillis: 5000,
+        propagateCreateError: false
+    },
     migrations: {
         directory: './migrations'
     },
